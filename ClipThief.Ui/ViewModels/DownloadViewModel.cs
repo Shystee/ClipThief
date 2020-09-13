@@ -5,7 +5,7 @@ using ClipThief.Ui.Command;
 
 namespace ClipThief.Ui.ViewModels
 {
-    public class DownloadViewModel : ReactiveObject, IRoutableViewModel
+    public class DownloadViewModel : ViewModelBase, IRoutableViewModel
     {
         private readonly IApplicationService applicationService;
 
@@ -21,7 +21,7 @@ namespace ClipThief.Ui.ViewModels
 
         private void OpenVideoFormatSelection()
         {
-            applicationService.Post(new VideoFormatSelectionViewModel());
+            applicationService.Post(new VideoFormatSelectionViewModel(applicationService));
         }
     }
 }

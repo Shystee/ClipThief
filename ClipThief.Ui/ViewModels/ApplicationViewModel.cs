@@ -1,14 +1,13 @@
 ﻿using System;
 
-using ClipThief.Ui.ViewModels;
-
-namespace ClipThief.Ui
+namespace ClipThief.Ui.ViewModels
 {
-    public interface IRoutableViewModel
+    public interface IApplicationViewModel
     {
+        IRoutableViewModel Main { get; }
     }
 
-    public class ApplicationViewModel : ReactiveObject
+    public class ApplicationViewModel : ViewModelBase, IApplicationViewModel
     {
         private IRoutableViewModel main;
 
@@ -22,7 +21,7 @@ namespace ClipThief.Ui
         public IRoutableViewModel Main
         {
             get => main;
-            set => SetPropertyAndNotify(ref main, value);
+            private set => SetPropertyAndNotify(ref main, value);
         }
     }
 }

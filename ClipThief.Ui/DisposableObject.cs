@@ -20,6 +20,11 @@ namespace ClipThief.Ui
 
         protected bool SuppressDebugWriteline { get; set; }
 
+        public static implicit operator CompositeDisposable(DisposableObject disposable)
+        {
+            return disposable.disposable;
+        }
+
         public virtual void Dispose()
         {
             if (SuppressDebugWriteline)
@@ -30,11 +35,6 @@ namespace ClipThief.Ui
             {
                 disposable.Dispose();
             }
-        }
-
-        public static implicit operator CompositeDisposable(DisposableObject disposable)
-        {
-            return disposable.disposable;
         }
 
         protected void DisposeOfAsync(IEnumerable<IDisposable> disposables, IScheduler scheduler)

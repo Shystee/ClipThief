@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Views
 {
     /// <summary>
-    ///     Interaction logic for MainWindow.xaml
+    ///     Interaction logic for ApplicationView.xaml
     /// </summary>
     public partial class ApplicationView : Window
     {

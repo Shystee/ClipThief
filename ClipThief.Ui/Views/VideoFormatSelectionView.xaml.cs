@@ -3,7 +3,7 @@
 namespace ClipThief.Ui.Views
 {
     /// <summary>
-    ///     Interaction logic for FormatView.xaml
+    ///     Interaction logic for VideoFormatSelectionView.xaml
     /// </summary>
     public partial class VideoFormatSelectionView : UserControl
     {

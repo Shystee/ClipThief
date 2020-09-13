@@ -15,15 +15,6 @@ namespace ClipThief.Ui
 
         private SuspendedNotifications suspendedNotifications;
 
-        protected ReactiveObject()
-        {
-            Observable.Return(this)
-                      .SelectMany(x => CultureService.CultureChanged.Skip(1), (x, y) => x)
-                      .ActivateGestures()
-                      .Subscribe(x => x.OnPropertyChanged())
-                      .DisposeWith(this);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public IDisposable SuspendNotifications()

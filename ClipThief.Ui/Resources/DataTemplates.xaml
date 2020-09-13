@@ -9,4 +9,7 @@
     <DataTemplate DataType="{x:Type viewModels:DownloadViewModel}">
         <views:DownloadView />
     </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:VideoCuttingViewModel}">
+        <views:VideoCuttingView />
+    </DataTemplate>
 </ResourceDictionary>

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 
 using ClipThief.Ui.ViewModels;
+using ClipThief.Ui.Views;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
