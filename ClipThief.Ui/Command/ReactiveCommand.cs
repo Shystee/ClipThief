@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Windows;
 using System.Windows.Input;
 
-using Microsoft.VisualBasic;
-
-namespace Wpf.Reactive.Learning.Command
+namespace ClipThief.Ui.Command
 {
     public sealed class ReactiveCommand : ReactiveCommand<object>
     {

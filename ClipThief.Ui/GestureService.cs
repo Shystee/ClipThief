@@ -4,9 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-using Microsoft.Extensions.Logging;
-
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public sealed class GestureService : DisposableObject, IGestureService
     {
@@ -23,8 +21,7 @@ namespace Wpf.Reactive.Learning
                                         Application.Current.Dispatcher);
             timer.Stop();
 
-            Disposable.Create(() => timer.Stop())
-                      .DisposeWith(this);
+            Disposable.Create(() => timer.Stop()).DisposeWith(this);
         }
 
         public void SetBusy()
@@ -39,7 +36,10 @@ namespace Wpf.Reactive.Learning
                 isBusy = busy;
                 Mouse.OverrideCursor = busy ? Cursors.Wait : null;
 
-                if (isBusy) timer.Start();
+                if (isBusy)
+                {
+                    timer.Start();
+                }
             }
         }
 

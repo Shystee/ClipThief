@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public static class EnumerableExtensions
     {
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
         {
             var array = enumerable.ToArray();
+
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < array.Length; i++)
             {

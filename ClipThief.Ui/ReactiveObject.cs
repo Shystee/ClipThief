@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public abstract class ReactiveObject : DisposableObject, INotifyPropertyChanged
     {
@@ -15,8 +15,6 @@ namespace Wpf.Reactive.Learning
 
         private SuspendedNotifications suspendedNotifications;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         protected ReactiveObject()
         {
             Observable.Return(this)
@@ -25,6 +23,8 @@ namespace Wpf.Reactive.Learning
                       .Subscribe(x => x.OnPropertyChanged())
                       .DisposeWith(this);
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public IDisposable SuspendNotifications()
         {

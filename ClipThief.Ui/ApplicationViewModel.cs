@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Windows;
 
-using Wpf.Reactive.Learning.Command;
-using Wpf.Reactive.Learning.ViewModels;
+using ClipThief.Ui.ViewModels;
 
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public interface IRoutableViewModel
     {

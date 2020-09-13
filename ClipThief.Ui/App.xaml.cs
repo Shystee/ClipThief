@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 
+using ClipThief.Ui.ViewModels;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using Wpf.Reactive.Learning.ViewModels;
-
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     /// <summary>
     ///     Interaction logic for App.xaml

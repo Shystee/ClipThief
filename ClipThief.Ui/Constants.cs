@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public static class Constants
     {

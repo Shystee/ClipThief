@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Linq;
-using Wpf.Reactive.Learning.Command;
 
-namespace Wpf.Reactive.Learning.ViewModels
+using ClipThief.Ui.Command;
+
+namespace ClipThief.Ui.ViewModels
 {
     public class DownloadViewModel : ReactiveObject, IRoutableViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Subjects;
 
-namespace Wpf.Reactive.Learning
+namespace ClipThief.Ui
 {
     public interface IApplicationService
     {
@@ -19,11 +19,11 @@ namespace Wpf.Reactive.Learning
             show = new Subject<IRoutableViewModel>().DisposeWith(this);
         }
 
-        public IObservable<IRoutableViewModel> Show => show;
-
         public void Post(IRoutableViewModel viewModel)
         {
             show.OnNext(viewModel);
         }
+
+        public IObservable<IRoutableViewModel> Show => show;
     }
 }

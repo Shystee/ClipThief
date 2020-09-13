@@ -1,7 +1,6 @@
-﻿namespace Wpf.Reactive.Learning.ViewModels
+﻿namespace ClipThief.Ui.ViewModels
 {
     public class VideoFormatSelectionViewModel : ReactiveObject, IRoutableViewModel
     {
-        
     }
 }

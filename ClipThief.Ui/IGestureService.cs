@@ -1,4 +1,4 @@
-﻿namespace Wpf.Reactive.Learning
+﻿namespace ClipThief.Ui
 {
     public interface IGestureService
     {
