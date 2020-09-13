@@ -32,7 +32,7 @@ namespace ClipThief.Ui.Command
 
         private readonly Subject<T> execute;
 
-        private bool _currentCanExecute;
+        private bool currentCanExecute;
 
         protected ReactiveCommand(IObservable<bool> canExecute)
         {
@@ -41,16 +41,26 @@ namespace ClipThief.Ui.Command
             canDisposable = canExecute.Subscribe(
                                                  x =>
                                                      {
-                                                         _currentCanExecute = x;
+                                                         currentCanExecute = x;
                                                          CommandManager.InvalidateRequerySuggested();
                                                      });
 
             execute = new Subject<T>();
         }
 
+        public static ReactiveCommand<T> Create()
+        {
+            return new ReactiveCommand<T>(Observable.Return(true));
+        }
+
+        public static ReactiveCommand<T> Create(IObservable<bool> canExecute)
+        {
+            return new ReactiveCommand<T>(canExecute);
+        }
+
         public virtual bool CanExecute(object parameter)
         {
-            return _currentCanExecute;
+            return currentCanExecute;
         }
 
         public event EventHandler CanExecuteChanged
@@ -92,17 +102,7 @@ namespace ClipThief.Ui.Command
         public IDisposable Subscribe(IObserver<T> observer)
         {
             return execute.ActivateGestures()
-                          .Subscribe(x => observer.OnNext(x), e => observer.OnError(e), () => observer.OnCompleted());
-        }
-
-        public static ReactiveCommand<T> Create()
-        {
-            return new ReactiveCommand<T>(Observable.Return(true));
-        }
-
-        public static ReactiveCommand<T> Create(IObservable<bool> canExecute)
-        {
-            return new ReactiveCommand<T>(canExecute);
+                          .Subscribe(observer.OnNext, observer.OnError, () => observer.OnCompleted());
         }
     }
 }
