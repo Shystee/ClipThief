@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ClipThief.Ui.Controls
@@ -13,7 +14,7 @@ namespace ClipThief.Ui.Controls
                                         nameof(LowerValue),
                                         typeof(double),
                                         typeof(RangeSlider),
-                                        new UIPropertyMetadata(0d));
+                                        new UIPropertyMetadata(0d, null, LowerValueCoerceValueCallback));
 
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(
@@ -34,7 +35,7 @@ namespace ClipThief.Ui.Controls
                                         nameof(UpperValue),
                                         typeof(double),
                                         typeof(RangeSlider),
-                                        new UIPropertyMetadata(0d));
+                                        new UIPropertyMetadata(1d, null, UpperValueCoerceValueCallback));
 
         public RangeSlider()
         {
@@ -63,6 +64,22 @@ namespace ClipThief.Ui.Controls
         {
             get => (double)GetValue(UpperValueProperty);
             set => SetValue(UpperValueProperty, value);
+        }
+
+        private static object LowerValueCoerceValueCallback(DependencyObject d, object valueObject)
+        {
+            var targetSlider = (RangeSlider)d;
+            var value = (double)valueObject;
+
+            return Math.Min(value, targetSlider.UpperValue);
+        }
+
+        private static object UpperValueCoerceValueCallback(DependencyObject d, object valueObject)
+        {
+            var targetSlider = (RangeSlider)d;
+            var value = (double)valueObject;
+
+            return Math.Max(value, targetSlider.LowerValue);
         }
     }
 }
