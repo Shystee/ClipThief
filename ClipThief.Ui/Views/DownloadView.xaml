@@ -8,16 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="Download" />
         <controls:RangeSlider Grid.Row="1"
-            LowerValue="30"
-                              UpperValue="70"
+                              Maximum="100"
                               Minimum="0"
-                              Maximum="100" />
+                              LowerValue="30"
+                              CurrentValue="50"
+                              UpperValue="70"/>
         <Button Grid.Row="2" Content="Select format" Command="{Binding Path=SelectFormatCommand, Mode=OneWay}" />
     </Grid>
 </UserControl>

@@ -23,20 +23,19 @@
         <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#FFD9D9D9" />
         <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
             <Canvas SnapsToDevicePixels="true">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="15" />
-                        <RowDefinition Height="15" />
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="Black"
-                               FontSize="9"
-                               Text="Test" Margin="0,-30,0,0" />
-                    <Ellipse Grid.Row="0" x:Name="Ellipse"
-                             StrokeThickness="5" Stroke="{StaticResource SliderThumb.Static.Stroke}" Width="15"
-                             Fill="{StaticResource SliderThumb.Static.Fill}" />
-                </Grid>
+                <local:Popup Canvas.Top="-30" Canvas.Left="-18" VerticalAlignment="Center">
+                    <local:Popup.AdditionalContent>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Foreground="Red"
+                                   FontSize="9"
+                                   Text="{Binding Value, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"/>
+                    </local:Popup.AdditionalContent>
+                </local:Popup>
+                <Ellipse x:Name="Ellipse"
+                         StrokeThickness="5" Stroke="{StaticResource SliderThumb.Static.Stroke}" Width="15"
+                         Height="15"
+                         Fill="{StaticResource SliderThumb.Static.Fill}" />
             </Canvas>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
@@ -94,7 +93,7 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <Style x:Key="SliderRepeatLeft" TargetType="{x:Type RepeatButton}">
+        <Style x:Key="SliderRepeatCurrent" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
             <Setter Property="IsTabStop" Value="false" />
@@ -109,14 +108,29 @@
             </Setter>
         </Style>
 
+        <Style x:Key="SliderRepeatLeft" TargetType="{x:Type RepeatButton}">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="SlateGray" BorderThickness="1" BorderBrush="SlateGray"
+                                Height="3" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="SliderRepeatRight" TargetType="{x:Type RepeatButton}">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border SnapsToDevicePixels="True" Background="YellowGreen" BorderThickness="1"
-                                BorderBrush="YellowGreen" Height="3" />
+                        <Border SnapsToDevicePixels="True" Background="SlateGray" BorderThickness="1"
+                                BorderBrush="SlateGray" Height="3" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -143,6 +157,52 @@
                     <Track x:Name="PART_Track" Grid.Row="1">
                         <Track.DecreaseRepeatButton>
                             <RepeatButton Style="{StaticResource SliderRepeatLeft}" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True"
+                                   Template="{StaticResource SliderThumbHorizontalDefault}" Width="15" Height="15"
+                                   VerticalAlignment="Center" />
+                        </Track.Thumb>
+                    </Track>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="TickPlacement" Value="TopLeft">
+                    <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalTop}" />
+                    <Setter Property="Margin" TargetName="TrackBackground" Value="5,2,5,0" />
+                </Trigger>
+                <Trigger Property="TickPlacement" Value="BottomRight">
+                    <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalBottom}" />
+                    <Setter Property="Margin" TargetName="TrackBackground" Value="5,0,5,2" />
+                </Trigger>
+                <Trigger Property="IsSelectionRangeEnabled" Value="true" />
+                <Trigger Property="IsKeyboardFocused" Value="true">
+                    <Setter Property="Foreground" TargetName="Thumb" Value="Blue" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="SimpleSliderCurrent" TargetType="{x:Type Slider}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2"
+                             Placement="Top" Grid.Row="0" Visibility="Collapsed" />
+                    <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0"
+                             Placement="Bottom" Grid.Row="2" Visibility="Collapsed" />
+                    <Border x:Name="TrackBackground" Grid.Row="1" VerticalAlignment="center">
+                        <Canvas>
+                            <Rectangle x:Name="PART_SelectionRange" />
+                        </Canvas>
+                    </Border>
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.DecreaseRepeatButton>
+                            <RepeatButton Style="{StaticResource SliderRepeatCurrent}" />
                         </Track.DecreaseRepeatButton>
                         <Track.Thumb>
                             <Thumb x:Name="Thumb" Focusable="False" OverridesDefaultStyle="True"
@@ -219,10 +279,16 @@
         <Border BorderThickness="0,1,0,0" BorderBrush="Black" VerticalAlignment="Center" Height="2"
                 Margin="5,0,5,0" />
 
-        <Slider Template="{StaticResource SimpleSliderLeft}" x:Name="LowerSlider"
+        <Slider Template="{StaticResource SimpleSliderLeft}" x:Name="LowerSlider" Panel.ZIndex="1"
                 Minimum="{Binding ElementName=Root, Path=Minimum}"
                 Maximum="{Binding ElementName=Root, Path=Maximum}"
                 Value="{Binding ElementName=Root, Path=LowerValue}"
+                Margin="0,0,10,0" />
+
+        <Slider Template="{StaticResource SimpleSliderCurrent}" x:Name="CurrentSlider"
+                Minimum="{Binding ElementName=Root, Path=Minimum}"
+                Maximum="{Binding ElementName=Root, Path=Maximum}"
+                Value="{Binding ElementName=Root, Path=CurrentValue}"
                 Margin="0,0,10,0" />
 
         <Slider Template="{StaticResource SimpleSliderRight}" x:Name="UpperSlider"

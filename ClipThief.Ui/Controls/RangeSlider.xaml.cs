@@ -16,6 +16,13 @@ namespace ClipThief.Ui.Controls
                                         typeof(RangeSlider),
                                         new UIPropertyMetadata(0d, null, LowerValueCoerceValueCallback));
 
+        public static readonly DependencyProperty CurrentValueProperty =
+            DependencyProperty.Register(
+                                        nameof(CurrentValue),
+                                        typeof(double),
+                                        typeof(RangeSlider),
+                                        new UIPropertyMetadata(0.5d, null, CurrentValueCoerceValueCallback));
+
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(
                                         nameof(Maximum),
@@ -42,6 +49,12 @@ namespace ClipThief.Ui.Controls
             InitializeComponent();
         }
 
+        public double CurrentValue
+        {
+            get => (double)GetValue(CurrentValueProperty);
+            set => SetValue(CurrentValueProperty, value);
+        }
+
         public double LowerValue
         {
             get => (double)GetValue(LowerValueProperty);
@@ -66,10 +79,38 @@ namespace ClipThief.Ui.Controls
             set => SetValue(UpperValueProperty, value);
         }
 
+        private static object CurrentValueCoerceValueCallback(DependencyObject d, object valueObject)
+        {
+            var targetSlider = (RangeSlider)d;
+            var value = (double)valueObject;
+
+            if (targetSlider.LowerValue < value && value < targetSlider.UpperValue)
+            {
+                return value;
+            }
+
+            if (value < targetSlider.LowerValue)
+            {
+                return targetSlider.LowerValue;
+            }
+
+            if (value > targetSlider.UpperValue)
+            {
+                return targetSlider.UpperValue;
+            }
+
+            return value;
+        }
+
         private static object LowerValueCoerceValueCallback(DependencyObject d, object valueObject)
         {
             var targetSlider = (RangeSlider)d;
             var value = (double)valueObject;
+
+            if (targetSlider.CurrentValue < value)
+            {
+                targetSlider.CurrentValue = value;
+            }
 
             return Math.Min(value, targetSlider.UpperValue);
         }
@@ -78,6 +119,11 @@ namespace ClipThief.Ui.Controls
         {
             var targetSlider = (RangeSlider)d;
             var value = (double)valueObject;
+
+            if (targetSlider.CurrentValue > value)
+            {
+                targetSlider.CurrentValue = value;
+            }
 
             return Math.Max(value, targetSlider.LowerValue);
         }
