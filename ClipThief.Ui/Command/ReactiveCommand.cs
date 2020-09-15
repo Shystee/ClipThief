@@ -102,7 +102,7 @@ namespace ClipThief.Ui.Command
         public IDisposable Subscribe(IObserver<T> observer)
         {
             return execute.ActivateGestures()
-                          .Subscribe(observer.OnNext, observer.OnError, () => observer.OnCompleted());
+                          .Subscribe(observer.OnNext, observer.OnError, observer.OnCompleted);
         }
     }
 }
