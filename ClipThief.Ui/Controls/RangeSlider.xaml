@@ -23,7 +23,7 @@
         <SolidColorBrush x:Key="SliderThumb.Disabled.Border" Color="#FFD9D9D9" />
         <ControlTemplate x:Key="SliderCropThumbHorizontal" TargetType="{x:Type Thumb}">
             <Canvas SnapsToDevicePixels="true">
-                <local:Popup Canvas.Top="-30" Canvas.Left="-18" VerticalAlignment="Center">
+                <!--<local:Popup Canvas.Top="-30" Canvas.Left="-18" VerticalAlignment="Center">
                     <local:Popup.AdditionalContent>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -31,7 +31,7 @@
                                    FontSize="9"
                                    Text="{Binding Value, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}" />
                     </local:Popup.AdditionalContent>
-                </local:Popup>
+                </local:Popup>-->
                 <Rectangle x:Name="Rectangle" Height="15" Width="8" Fill="{StaticResource SliderThumb.Static.Fill}" />
             </Canvas>
             <ControlTemplate.Triggers>
