@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive;
 
 using ClipThief.Ui.Command;
@@ -12,6 +13,9 @@ namespace ClipThief.Ui.ViewModels
     {
         private readonly IApplicationService applicationService;
 
+
+        private string videoUrl;
+
         public DownloadViewModel(IApplicationService applicationService)
         {
             this.applicationService = applicationService;
@@ -20,10 +24,20 @@ namespace ClipThief.Ui.ViewModels
             SelectFormatCommand.Subscribe(x => OpenVideoFormatSelection()).DisposeWith(this);
         }
 
+        // todo: add validation
         public ReactiveCommand<Unit> SelectFormatCommand { get; }
+
+        public string VideoUrl
+        {
+            get => videoUrl;
+            set => SetPropertyAndNotify(ref videoUrl, value);
+        }
 
         private void OpenVideoFormatSelection()
         {
+            Debug.WriteLine($"Starting format selection on {VideoUrl}");
+
+            // todo: inject factory to create the viewmodel
             applicationService.Post(new VideoFormatSelectionViewModel(applicationService));
         }
     }
