@@ -109,6 +109,7 @@ namespace ClipThief.Ui.Controls
 
             // setup lower value events
             Timeline.LowerSlider.ValueChanged += LowerSliderOnValueChanged;
+            Timeline.LowerSlider.OnDragEnded += LowerTimeDragEnded;
 
             timerVideoPlayback.Start();
 
@@ -116,24 +117,21 @@ namespace ClipThief.Ui.Controls
             Player.MediaOpened -= PlayerOnMediaOpened;
         }
 
+        private void LowerTimeDragEnded(object sender, DragCompletedEventArgs e)
+        {
+            if (!timerVideoPlayback.IsEnabled)
+                Player.Position = TimeSpan.FromSeconds(Timeline.CurrentValue);
+
+            timerVideoPlayback.Start();
+            Player.Play();
+        }
+
         private void LowerSliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (e.NewValue < Timeline.CurrentValue)
-            {
-                if (!timerVideoPlayback.IsEnabled)
-                {
-                    timerVideoPlayback.Start();
-                    Player.Play();
-                }
+            if (e.NewValue < Timeline.CurrentValue) return;
 
-                return;
-            }
-
-            if (timerVideoPlayback.IsEnabled)
-            {
-                Player.Pause();
-                timerVideoPlayback.Stop();
-            }
+            Player.Pause();
+            timerVideoPlayback.Stop();
         }
 
         private void CurrentTimeDragEnded(object sender, DragCompletedEventArgs e)
