@@ -24,10 +24,7 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Content="Play" x:Name="PlayButton" />
-            <controls:RangeSlider Grid.Column="1" LowerValue="30"
-                                  UpperValue="70"
-                                  Minimum="0"
-                                  Maximum="100" />
+            <controls:RangeSlider x:Name="Timeline" Grid.Column="1" />
         </Grid>
     </Grid>
 </UserControl>
