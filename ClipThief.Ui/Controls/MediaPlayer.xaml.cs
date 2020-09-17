@@ -11,7 +11,7 @@ namespace ClipThief.Ui.Controls
     /// <summary>
     ///     Interaction logic for MediaPlayer.xaml
     /// </summary>
-    public partial class MediaPlayer : UserControl, IDisposable
+    public partial class MediaPlayer : UserControl
     {
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
                                                                                                "Source",
@@ -27,16 +27,11 @@ namespace ClipThief.Ui.Controls
         public MediaPlayer()
         {
             InitializeComponent();
+            this.Unloaded += UnloadedHandler;
             PlayButton.Click += PauseButtonOnClick;
         }
 
-        public Uri Source
-        {
-            get => (Uri)GetValue(SourceProperty);
-            set => SetValue(SourceProperty, value);
-        }
-
-        public void Dispose()
+        private void UnloadedHandler(object sender, RoutedEventArgs e)
         {
             Timeline.CurrentSlider.OnDragStarted -= CurrentTimeDragStarted;
             Timeline.CurrentSlider.OnDragEnded -= CurrentTimeDragEnded;
@@ -52,6 +47,13 @@ namespace ClipThief.Ui.Controls
 
             timerVideoPlayback.Tick -= TimerVideoPlaybackTick;
             timerVideoPlayback = null;
+            this.Unloaded -= UnloadedHandler;
+        }
+
+        public Uri Source
+        {
+            get => (Uri)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         private void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
