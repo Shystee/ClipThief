@@ -81,15 +81,6 @@ namespace ClipThief.Ui
                     public static readonly string ModifiedOn = "modified_on";
                 }
 
-                public class SeparatorsFormat
-                {
-                    public string Format { get; set; }
-
-                    public int? Rounding { get; set; }
-
-                    public bool? Separators { get; set; }
-                }
-
                 public static class Transitions
                 {
                     public static string Default = "Default";
@@ -97,6 +88,15 @@ namespace ClipThief.Ui
                     public static string NewNegative = "NewNegative";
 
                     public static string NewPositive = "NewPositive";
+                }
+
+                public class SeparatorsFormat
+                {
+                    public string Format { get; set; }
+
+                    public int? Rounding { get; set; }
+
+                    public bool? Separators { get; set; }
                 }
             }
 

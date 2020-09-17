@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
 namespace ClipThief.Ui.Controls
@@ -9,6 +8,11 @@ namespace ClipThief.Ui.Controls
     /// </summary>
     public partial class SliderExtension : Slider
     {
+        public SliderExtension()
+        {
+            InitializeComponent();
+        }
+
         public delegate void OnDragEndedEventHandler(object sender, DragCompletedEventArgs e);
 
         public delegate void OnDragStartedEventHandler(object sender, DragStartedEventArgs e);
@@ -16,11 +20,6 @@ namespace ClipThief.Ui.Controls
         public event OnDragEndedEventHandler OnDragEnded;
 
         public event OnDragStartedEventHandler OnDragStarted;
-
-        public SliderExtension()
-        {
-            InitializeComponent();
-        }
 
         protected override void OnThumbDragCompleted(DragCompletedEventArgs e)
         {

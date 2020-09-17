@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Reactive.Linq;
 
-namespace ClipThief.Ui
+using ClipThief.Ui.Extensions;
+using ClipThief.Ui.Services;
+
+namespace ClipThief.Ui.Core
 {
     public class ViewModelBase : ReactiveObject
     {

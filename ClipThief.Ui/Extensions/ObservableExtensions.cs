@@ -3,8 +3,9 @@ using System.Reactive;
 using System.Reactive.Linq;
 
 using ClipThief.Ui.Command;
+using ClipThief.Ui.Services;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Extensions
 {
     public static class ObservableExtensions
     {

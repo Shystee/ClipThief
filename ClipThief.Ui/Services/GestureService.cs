@@ -4,8 +4,16 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace ClipThief.Ui
+using ClipThief.Ui.Core;
+using ClipThief.Ui.Extensions;
+
+namespace ClipThief.Ui.Services
 {
+    public interface IGestureService
+    {
+        void SetBusy();
+    }
+
     public sealed class GestureService : DisposableObject, IGestureService
     {
         private readonly DispatcherTimer timer;

@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
 
+using ClipThief.Ui.Extensions;
+
 namespace ClipThief.Ui.Command
 {
     public sealed class ReactiveCommand : ReactiveCommand<object>
@@ -48,21 +50,6 @@ namespace ClipThief.Ui.Command
             execute = new Subject<T>();
         }
 
-        public static ReactiveCommand<T> Create()
-        {
-            return new ReactiveCommand<T>(Observable.Return(true));
-        }
-
-        public static ReactiveCommand<T> Create(IObservable<bool> canExecute)
-        {
-            return new ReactiveCommand<T>(canExecute);
-        }
-
-        public virtual bool CanExecute(object parameter)
-        {
-            return currentCanExecute;
-        }
-
         public event EventHandler CanExecuteChanged
         {
             add
@@ -78,14 +65,19 @@ namespace ClipThief.Ui.Command
             }
         }
 
-        public virtual void Execute(object parameter)
+        public static ReactiveCommand<T> Create()
         {
-            var typedParameter = parameter is T o ? o : default;
+            return new ReactiveCommand<T>(Observable.Return(true));
+        }
 
-            if (CanExecute(typedParameter))
-            {
-                execute.OnNext(typedParameter);
-            }
+        public static ReactiveCommand<T> Create(IObservable<bool> canExecute)
+        {
+            return new ReactiveCommand<T>(canExecute);
+        }
+
+        public virtual bool CanExecute(object parameter)
+        {
+            return currentCanExecute;
         }
 
         public void Dispose()
@@ -99,10 +91,19 @@ namespace ClipThief.Ui.Command
             execute.Dispose();
         }
 
+        public virtual void Execute(object parameter)
+        {
+            var typedParameter = parameter is T o ? o : default;
+
+            if (CanExecute(typedParameter))
+            {
+                execute.OnNext(typedParameter);
+            }
+        }
+
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            return execute.ActivateGestures()
-                          .Subscribe(observer.OnNext, observer.OnError, observer.OnCompleted);
+            return execute.ActivateGestures().Subscribe(observer.OnNext, observer.OnError, observer.OnCompleted);
         }
     }
 }

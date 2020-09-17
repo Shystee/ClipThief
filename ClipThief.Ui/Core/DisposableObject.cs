@@ -4,7 +4,9 @@ using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-namespace ClipThief.Ui
+using ClipThief.Ui.Extensions;
+
+namespace ClipThief.Ui.Core
 {
     public abstract class DisposableObject : IDisposable
     {

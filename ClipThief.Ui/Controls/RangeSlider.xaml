@@ -300,10 +300,10 @@
                                Margin="0,0,10,0" />
 
         <local:SliderExtension Template="{StaticResource SimpleSliderCurrent}" x:Name="CurrentSlider"
-                Minimum="{Binding ElementName=Root, Path=Minimum}"
-                Maximum="{Binding ElementName=Root, Path=Maximum}"
-                Value="{Binding ElementName=Root, Path=CurrentValue}"
-                Margin="0,0,10,0" />
+                               Minimum="{Binding ElementName=Root, Path=Minimum}"
+                               Maximum="{Binding ElementName=Root, Path=Maximum}"
+                               Value="{Binding ElementName=Root, Path=CurrentValue}"
+                               Margin="0,0,10,0" />
 
         <Slider Template="{StaticResource SimpleSliderRight}" x:Name="UpperSlider"
                 Minimum="{Binding ElementName=Root, Path=Minimum}"

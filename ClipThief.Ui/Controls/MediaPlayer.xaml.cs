@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -27,43 +26,14 @@ namespace ClipThief.Ui.Controls
         public MediaPlayer()
         {
             InitializeComponent();
-            this.Unloaded += UnloadedHandler;
+            Unloaded += UnloadedHandler;
             PlayButton.Click += PauseButtonOnClick;
-        }
-
-        private void UnloadedHandler(object sender, RoutedEventArgs e)
-        {
-            Timeline.CurrentSlider.OnDragStarted -= CurrentTimeDragStarted;
-            Timeline.CurrentSlider.OnDragEnded -= CurrentTimeDragEnded;
-
-            if (Player.CanPause)
-            {
-                PlayButton.Click -= PauseButtonOnClick;
-            }
-            else
-            {
-                PlayButton.Click -= PlayButtonOnClick;
-            }
-
-            timerVideoPlayback.Tick -= TimerVideoPlaybackTick;
-            timerVideoPlayback = null;
-            this.Unloaded -= UnloadedHandler;
         }
 
         public Uri Source
         {
             get => (Uri)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
-        }
-
-        private void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
-        {
-            MediaControl.Visibility = Visibility.Visible;
-        }
-
-        private void MediaPlayerOnMouseLeave(object sender, MouseEventArgs e)
-        {
-            MediaControl.Visibility = Visibility.Hidden;
         }
 
         private static object OnSourcePropertyChange(DependencyObject d, object value)
@@ -77,6 +47,57 @@ namespace ClipThief.Ui.Controls
             mediaPlayer.StartVideo();
 
             return value;
+        }
+
+        private void CurrentTimeDragEnded(object sender, DragCompletedEventArgs e)
+        {
+            Timeline.CurrentSlider.ValueChanged -= OnCurrentTimeChange;
+            timerVideoPlayback.Start();
+            Player.Play();
+        }
+
+        private void CurrentTimeDragStarted(object sender, DragStartedEventArgs e)
+        {
+            timerVideoPlayback.Stop();
+            Player.Pause();
+            Timeline.CurrentSlider.ValueChanged += OnCurrentTimeChange;
+        }
+
+        private void LowerSliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (e.NewValue < Timeline.CurrentValue)
+            {
+                return;
+            }
+
+            Player.Pause();
+            timerVideoPlayback.Stop();
+        }
+
+        private void LowerTimeDragEnded(object sender, DragCompletedEventArgs e)
+        {
+            if (!timerVideoPlayback.IsEnabled)
+            {
+                Player.Position = TimeSpan.FromSeconds(Timeline.CurrentValue);
+            }
+
+            timerVideoPlayback.Start();
+            Player.Play();
+        }
+
+        private void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
+        {
+            MediaControl.Visibility = Visibility.Visible;
+        }
+
+        private void MediaPlayerOnMouseLeave(object sender, MouseEventArgs e)
+        {
+            MediaControl.Visibility = Visibility.Hidden;
+        }
+
+        private void OnCurrentTimeChange(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Player.Position = TimeSpan.FromSeconds(e.NewValue);
         }
 
         private void PauseButtonOnClick(object sender, RoutedEventArgs e)
@@ -119,49 +140,12 @@ namespace ClipThief.Ui.Controls
             Player.MediaOpened -= PlayerOnMediaOpened;
         }
 
-        private void LowerTimeDragEnded(object sender, DragCompletedEventArgs e)
-        {
-            if (!timerVideoPlayback.IsEnabled)
-                Player.Position = TimeSpan.FromSeconds(Timeline.CurrentValue);
-
-            timerVideoPlayback.Start();
-            Player.Play();
-        }
-
-        private void LowerSliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (e.NewValue < Timeline.CurrentValue) return;
-
-            Player.Pause();
-            timerVideoPlayback.Stop();
-        }
-
-        private void CurrentTimeDragEnded(object sender, DragCompletedEventArgs e)
-        {
-            Timeline.CurrentSlider.ValueChanged -= OnCurrentTimeChange;
-            timerVideoPlayback.Start();
-            Player.Play();
-        }
-
-        private void CurrentTimeDragStarted(object sender, DragStartedEventArgs e)
-        {
-            timerVideoPlayback.Stop();
-            Player.Pause();
-            Timeline.CurrentSlider.ValueChanged += OnCurrentTimeChange;
-        }
-
-        private void OnCurrentTimeChange(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            Player.Position = TimeSpan.FromSeconds(e.NewValue);
-        }
-
         private void StartVideo()
         {
             Player.MediaOpened += PlayerOnMediaOpened;
 
             // setup timer
-            timerVideoPlayback = new DispatcherTimer();
-            timerVideoPlayback.Interval = TimeSpan.FromSeconds(0.05);
+            timerVideoPlayback = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.05) };
             timerVideoPlayback.Tick += TimerVideoPlaybackTick;
 
             // play the video
@@ -185,6 +169,25 @@ namespace ClipThief.Ui.Controls
             }
 
             Timeline.CurrentValue = Player.Position.TotalSeconds;
+        }
+
+        private void UnloadedHandler(object sender, RoutedEventArgs e)
+        {
+            Timeline.CurrentSlider.OnDragStarted -= CurrentTimeDragStarted;
+            Timeline.CurrentSlider.OnDragEnded -= CurrentTimeDragEnded;
+
+            if (Player.CanPause)
+            {
+                PlayButton.Click -= PauseButtonOnClick;
+            }
+            else
+            {
+                PlayButton.Click -= PlayButtonOnClick;
+            }
+
+            timerVideoPlayback.Tick -= TimerVideoPlaybackTick;
+            timerVideoPlayback = null;
+            Unloaded -= UnloadedHandler;
         }
     }
 }

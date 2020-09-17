@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Extensions
 {
     public static class EnumerableExtensions
     {

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Reactive.Subjects;
 
-namespace ClipThief.Ui
+using ClipThief.Ui.Core;
+using ClipThief.Ui.Extensions;
+using ClipThief.Ui.ViewModels;
+
+namespace ClipThief.Ui.Services
 {
     public interface IApplicationService
     {
@@ -19,11 +23,11 @@ namespace ClipThief.Ui
             show = new Subject<IRoutableViewModel>().DisposeWith(this);
         }
 
+        public IObservable<IRoutableViewModel> Show => show;
+
         public void Post(IRoutableViewModel viewModel)
         {
             show.OnNext(viewModel);
         }
-
-        public IObservable<IRoutableViewModel> Show => show;
     }
 }

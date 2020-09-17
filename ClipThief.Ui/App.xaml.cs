@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 
+using ClipThief.Ui.Extensions;
+using ClipThief.Ui.Services;
 using ClipThief.Ui.ViewModels;
 using ClipThief.Ui.Views;
 

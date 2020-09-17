@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Services
 {
     public static class CultureService
     {
@@ -52,9 +52,7 @@ namespace ClipThief.Ui
 
         public static void SetCulture(string cultureName)
         {
-            CultureInfo culture;
-
-            if (Cultures.TryGetValue(cultureName, out culture))
+            if (Cultures.TryGetValue(cultureName, out var culture))
             {
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;

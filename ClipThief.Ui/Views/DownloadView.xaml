@@ -17,7 +17,7 @@
                               Minimum="0"
                               LowerValue="30"
                               CurrentValue="50"
-                              UpperValue="70"/>
+                              UpperValue="70" />
         <Button Grid.Row="2" Content="Select format" Command="{Binding Path=SelectFormatCommand, Mode=OneWay}" />
     </Grid>
 </UserControl>

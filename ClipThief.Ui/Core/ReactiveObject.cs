@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Core
 {
     public abstract class ReactiveObject : DisposableObject, INotifyPropertyChanged
     {
@@ -107,13 +106,6 @@ namespace ClipThief.Ui
                 counter = new Counter(Dispose);
             }
 
-            public void Dispose()
-            {
-                target.suspendedNotifications = null;
-
-                foreach (var property in properties) target.OnPropertyChanged(property);
-            }
-
             public void Add(string propertyName)
             {
                 properties.Add(propertyName);
@@ -124,6 +116,13 @@ namespace ClipThief.Ui
                 counter.Increment();
 
                 return counter;
+            }
+
+            public void Dispose()
+            {
+                target.suspendedNotifications = null;
+
+                foreach (var property in properties) target.OnPropertyChanged(property);
             }
 
             // Using an internal class to avoid using closure which would cases the creation of a class

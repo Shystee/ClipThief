@@ -1,5 +1,9 @@
 ﻿using System;
 
+using ClipThief.Ui.Core;
+using ClipThief.Ui.Extensions;
+using ClipThief.Ui.Services;
+
 namespace ClipThief.Ui.ViewModels
 {
     public interface IApplicationViewModel

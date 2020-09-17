@@ -17,14 +17,17 @@
         <MediaElement Grid.Row="0" Grid.RowSpan="2" x:Name="Player"
                       Source="{Binding ElementName=Root, Path=Source, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                       LoadedBehavior="Manual" />
-        <Grid x:Name="MediaControl" Grid.Row="1" Margin="5" Visibility="Hidden">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*" />
-                <ColumnDefinition Width="5*" />
-            </Grid.ColumnDefinitions>
+        <Border x:Name="MediaControl" Grid.Row="1" Margin="5" Visibility="Hidden" CornerRadius="10"
+                Background="WhiteSmoke" Padding="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="9.5*" />
+                </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Play" x:Name="PlayButton" />
-            <controls:RangeSlider x:Name="Timeline" Grid.Column="1" />
-        </Grid>
+                <Button Grid.Column="0" Content="Play" x:Name="PlayButton" Padding="2" />
+                <controls:RangeSlider x:Name="Timeline" Grid.Column="1" Padding="2" />
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

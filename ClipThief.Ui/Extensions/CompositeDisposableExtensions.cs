@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Disposables;
 
-namespace ClipThief.Ui
+namespace ClipThief.Ui.Extensions
 {
     public static class CompositeDisposableExtensions
     {

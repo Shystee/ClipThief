@@ -1,8 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-
-using Color = System.Drawing.Color;
 
 namespace ClipThief.Ui.Controls
 {
@@ -14,9 +11,8 @@ namespace ClipThief.Ui.Controls
         public static readonly DependencyProperty AdditionalContentProperty =
             DependencyProperty.Register("AdditionalContent", typeof(object), typeof(Popup), new PropertyMetadata(null));
 
-        //public static readonly DependencyProperty PopupColorProperty =
-        //    DependencyProperty.Register("AdditionalContent", typeof(Brush), typeof(Popup), new PropertyMetadata(Color.White));
-
+        // public static readonly DependencyProperty PopupColorProperty =
+        // DependencyProperty.Register("AdditionalContent", typeof(Brush), typeof(Popup), new PropertyMetadata(Color.White));
         public Popup()
         {
             InitializeComponent();
@@ -31,10 +27,10 @@ namespace ClipThief.Ui.Controls
             set => SetValue(AdditionalContentProperty, value);
         }
 
-        //public Brush PopupColor
-        //{
-        //    get => (Brush)GetValue(PopupColorProperty);
-        //    set => SetValue(PopupColorProperty, value);
-        //}
+        // public Brush PopupColor
+        // {
+        // get => (Brush)GetValue(PopupColorProperty);
+        // set => SetValue(PopupColorProperty, value);
+        // }
     }
 }

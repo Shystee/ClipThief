@@ -42,13 +42,12 @@ namespace ClipThief.Ui.Controls
                                         nameof(UpperValue),
                                         typeof(double),
                                         typeof(RangeSlider),
-                                        new UIPropertyMetadata(1d, null, UpperValueCoerceValueCallback)); 
+                                        new UIPropertyMetadata(1d, null, UpperValueCoerceValueCallback));
 
         public RangeSlider()
         {
             InitializeComponent();
         }
-
 
         public delegate void OnUpperValueReachedEventHandler(object sender);
 
@@ -102,6 +101,7 @@ namespace ClipThief.Ui.Controls
             if (value > targetSlider.UpperValue)
             {
                 targetSlider.OnUpperValueReached?.Invoke(targetSlider);
+
                 return targetSlider.UpperValue;
             }
 

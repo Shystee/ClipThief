@@ -1,4 +1,4 @@
-﻿namespace ClipThief.Ui
+﻿namespace ClipThief.Ui.ViewModels
 {
     public interface IRoutableViewModel
     {
