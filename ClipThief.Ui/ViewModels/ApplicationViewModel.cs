@@ -15,7 +15,7 @@ namespace ClipThief.Ui.ViewModels
     {
         private IRoutableViewModel main;
 
-        public ApplicationViewModel(DownloadViewModel main, IApplicationService applicationService)
+        public ApplicationViewModel(IDownloadViewModel main, IApplicationService applicationService)
         {
             Main = main;
 
