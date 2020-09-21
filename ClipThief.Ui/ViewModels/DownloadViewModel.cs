@@ -48,7 +48,7 @@ namespace ClipThief.Ui.ViewModels
         {
             var videoFormats = await videoDownloadService.GetVideoQualitiesAsync(VideoUrl).ConfigureAwait(false);
             var audioFormats = await videoDownloadService.GetAudioQualitiesAsync(VideoUrl).ConfigureAwait(false);
-            applicationService.Post(factory.Create(videoFormats, audioFormats));
+            applicationService.Post(factory.Create(VideoUrl, videoFormats, audioFormats));
         }
     }
 }

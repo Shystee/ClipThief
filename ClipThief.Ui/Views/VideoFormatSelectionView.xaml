@@ -6,13 +6,19 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="50*" />
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="45*" />
             <ColumnDefinition Width="45*" />
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox Grid.Column="0" ItemsSource="{Binding Path=VideoFormats, Mode=OneWay}" DisplayMemberPath="Quality" SelectedValue="{Binding Path=SelectedVideoFormat, Mode=OneWayToSource}"/>
-        <ComboBox Grid.Column="1" ItemsSource="{Binding Path=AudioFormats, Mode=OneWay}" DisplayMemberPath="Hertz" SelectedValue="{Binding Path=SelectedAudioFormat, Mode=OneWayToSource}"/>
-        <Button Grid.Column="2" Content="Select format" Command="{Binding Path=OpenVideoCuttingCommand, Mode=OneWay}" />
+        <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Path=FileName, Mode=OneWayToSource}" />
+        <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=VideoFormats, Mode=OneWay}" DisplayMemberPath="Quality" SelectedValue="{Binding Path=SelectedVideoFormat, Mode=OneWayToSource}"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Path=AudioFormats, Mode=OneWay}" DisplayMemberPath="Hertz" SelectedValue="{Binding Path=SelectedAudioFormat, Mode=OneWayToSource}"/>
+        <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Content="Select format" Command="{Binding Path=OpenVideoCuttingCommand, Mode=OneWay}" />
     </Grid>
 </UserControl>

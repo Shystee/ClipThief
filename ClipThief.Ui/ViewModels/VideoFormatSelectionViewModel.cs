@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reactive;
 
 using ClipThief.Ui.Command;
@@ -19,21 +18,48 @@ namespace ClipThief.Ui.ViewModels
     {
         private readonly IApplicationService applicationService;
 
-        private VideoFormat selectedVideoFormat;
+        private readonly string url;
+
+        private readonly IVideoDownloadService videoService;
+
+        private string fileName;
 
         private AudioFormat selectedAudioFormat;
 
-        public VideoFormatSelectionViewModel(List<VideoFormat> videoFormats, List<AudioFormat> audioFormats, IApplicationService applicationService)
+        private VideoFormat selectedVideoFormat;
+
+        public VideoFormatSelectionViewModel(
+            string url,
+            List<VideoFormat> videoFormats,
+            List<AudioFormat> audioFormats,
+            IVideoDownloadService videoService,
+            IApplicationService applicationService)
         {
             VideoFormats = videoFormats;
             AudioFormats = audioFormats;
+            this.url = url;
+            this.videoService = videoService;
             this.applicationService = applicationService;
 
             OpenVideoCuttingCommand = ReactiveCommand<Unit>.Create().DisposeWith(this);
             OpenVideoCuttingCommand.Subscribe(x => OpenVideoCutting()).DisposeWith(this);
         }
 
-        public List<VideoFormat> VideoFormats { get; }
+        public List<AudioFormat> AudioFormats { get; }
+
+        public string FileName
+        {
+            get => fileName;
+            set => SetPropertyAndNotify(ref fileName, value);
+        }
+
+        public ReactiveCommand<Unit> OpenVideoCuttingCommand { get; }
+
+        public AudioFormat SelectedAudioFormat
+        {
+            get => selectedAudioFormat;
+            set => SetPropertyAndNotify(ref selectedAudioFormat, value);
+        }
 
         public VideoFormat SelectedVideoFormat
         {
@@ -41,19 +67,19 @@ namespace ClipThief.Ui.ViewModels
             set => SetPropertyAndNotify(ref selectedVideoFormat, value);
         }
 
-        public List<AudioFormat> AudioFormats { get; }
-
-        public AudioFormat SelectedFormat
-        {
-            get => selectedAudioFormat;
-            set => SetPropertyAndNotify(ref selectedAudioFormat, value);
-        }
-
-        public ReactiveCommand<Unit> OpenVideoCuttingCommand { get; }
+        public List<VideoFormat> VideoFormats { get; }
 
         private void OpenVideoCutting()
         {
-            applicationService.Post(new VideoCuttingViewModel());
+            videoService.FinishedDownload += (sender, args) =>
+                                                 {
+                                                     applicationService.Post(new VideoCuttingViewModel(FileName));
+                                                 };
+            videoService.DownloadAsync(
+                                       url,
+                                       FileName,
+                                       selectedVideoFormat.FormatCode,
+                                       selectedAudioFormat.FormatCode);
         }
     }
 }

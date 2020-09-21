@@ -12,7 +12,15 @@ namespace ClipThief.Ui.Services
 {
     public interface IVideoDownloadService
     {
-        Task DownloadAsync(string url, int videoFormat, int audioFormat);
+        event YoutubeDownloadService.ErrorEventHandler ErrorDownload;
+
+        event YoutubeDownloadService.FinishedDownloadEventHandler FinishedDownload;
+
+        event YoutubeDownloadService.ProgressEventHandler ProgressDownload;
+
+        event YoutubeDownloadService.StartedDownloadEventHandler StartedDownload;
+
+        Task DownloadAsync(string url, string fileName, int videoFormat, int audioFormat);
 
         Task<List<AudioFormat>> GetAudioQualitiesAsync(string url);
 
@@ -49,16 +57,13 @@ namespace ClipThief.Ui.Services
 
         public decimal Percentage { get; private set; }
 
-        public Task DownloadAsync(string url, int videoFormat, int audioFormat)
+        public Task DownloadAsync(string url, string fileName, int videoFormat, int audioFormat)
         {
             Finished = false;
             Percentage = 0;
 
-            // var arguments = $@"--continue  --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {url} -o ""{destinationPath}""";
-
-            // TODO: remove the hardcoded formats and merge
             var arguments =
-                $@"--continue  --no-overwrites --restrict-filenames --format {videoFormat}+{audioFormat} --merge-output-format webm {url}";
+                $"--continue  --no-overwrites --restrict-filenames -o \"{fileName}.%(ext)s\" --format {videoFormat}+{audioFormat} --merge-output-format mp4 {url}";
 
             // setup the process that will fire youtube-dl
             process = new Process

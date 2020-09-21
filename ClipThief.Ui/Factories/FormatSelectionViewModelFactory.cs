@@ -8,18 +8,31 @@ namespace ClipThief.Ui.Factories
 {
     public interface IFormatSelectionViewModelFactory
     {
-        IVideoFormatSelectionViewModel Create(List<VideoFormat> videoFormats, List<AudioFormat> audioFormats);
+        IVideoFormatSelectionViewModel Create(string url, List<VideoFormat> videoFormats, List<AudioFormat> audioFormats);
     }
 
     public class FormatSelectionViewModelFactory : IFormatSelectionViewModelFactory
     {
         private readonly IApplicationService applicationService;
 
-        public FormatSelectionViewModelFactory(IApplicationService applicationService)
+        private readonly IVideoDownloadService videoDownloadService;
+
+        public FormatSelectionViewModelFactory(
+            IApplicationService applicationService,
+            IVideoDownloadService videoDownloadService)
         {
             this.applicationService = applicationService;
+            this.videoDownloadService = videoDownloadService;
         }
 
-        public IVideoFormatSelectionViewModel Create(List<VideoFormat> videoFormats, List<AudioFormat> audioFormats) => new VideoFormatSelectionViewModel(videoFormats, audioFormats,applicationService);
+        public IVideoFormatSelectionViewModel Create(string url, List<VideoFormat> videoFormats, List<AudioFormat> audioFormats)
+        {
+            return new VideoFormatSelectionViewModel(
+                                                     url,
+                                                     videoFormats,
+                                                     audioFormats,
+                                                     videoDownloadService,
+                                                     applicationService);
+        }
     }
 }

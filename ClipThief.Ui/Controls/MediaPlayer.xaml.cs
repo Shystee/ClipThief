@@ -120,6 +120,8 @@ namespace ClipThief.Ui.Controls
         {
             Timeline.OnUpperValueReached += TimelineOnOnUpperValueReached;
 
+            Player.Volume = 100;
+
             // setup sliders
             Timeline.LowerValue = 0;
             Timeline.Minimum = 0;
