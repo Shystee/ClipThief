@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive;
-
-using ClipThief.Ui.Command;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ClipThief.Ui.Contexts;
 using ClipThief.Ui.Core;
+using ClipThief.Ui.Events;
 using ClipThief.Ui.Extensions;
 using ClipThief.Ui.Models;
 using ClipThief.Ui.Services;
+
+using Reactive.Bindings;
 
 namespace ClipThief.Ui.ViewModels
 {
@@ -18,7 +19,7 @@ namespace ClipThief.Ui.ViewModels
     {
         private readonly IApplicationService applicationService;
 
-        private readonly string url;
+        private readonly ApplicationContext applicationContext;
 
         private readonly IVideoDownloadService videoService;
 
@@ -29,20 +30,20 @@ namespace ClipThief.Ui.ViewModels
         private VideoFormat selectedVideoFormat;
 
         public VideoFormatSelectionViewModel(
-            string url,
             List<VideoFormat> videoFormats,
             List<AudioFormat> audioFormats,
+            ApplicationContext applicationContext,
             IVideoDownloadService videoService,
             IApplicationService applicationService)
         {
             VideoFormats = videoFormats;
             AudioFormats = audioFormats;
-            this.url = url;
+            this.applicationContext = applicationContext;
             this.videoService = videoService;
             this.applicationService = applicationService;
 
-            OpenVideoCuttingCommand = ReactiveCommand<Unit>.Create().DisposeWith(this);
-            OpenVideoCuttingCommand.Subscribe(x => OpenVideoCutting()).DisposeWith(this);
+            OpenVideoCuttingCommand = new AsyncReactiveCommand().DisposeWith(this);
+            OpenVideoCuttingCommand.Subscribe(x => OpenVideoCuttingAsync()).DisposeWith(this);
         }
 
         public List<AudioFormat> AudioFormats { get; }
@@ -53,7 +54,7 @@ namespace ClipThief.Ui.ViewModels
             set => SetPropertyAndNotify(ref fileName, value);
         }
 
-        public ReactiveCommand<Unit> OpenVideoCuttingCommand { get; }
+        public AsyncReactiveCommand OpenVideoCuttingCommand { get; }
 
         public AudioFormat SelectedAudioFormat
         {
@@ -69,17 +70,17 @@ namespace ClipThief.Ui.ViewModels
 
         public List<VideoFormat> VideoFormats { get; }
 
-        private void OpenVideoCutting()
+        private void OnFinishedDownload(object sender, DownloadEventArgs args)
         {
-            videoService.FinishedDownload += (sender, args) =>
-                                                 {
-                                                     applicationService.Post(new VideoCuttingViewModel(FileName));
-                                                 };
-            videoService.DownloadAsync(
-                                       url,
-                                       FileName,
-                                       selectedVideoFormat.FormatCode,
-                                       selectedAudioFormat.FormatCode);
+            applicationService.Post(new VideoCuttingViewModel(FileName));
+            videoService.FinishedDownload -= OnFinishedDownload;
+        }
+
+        private Task OpenVideoCuttingAsync()
+        {
+            videoService.FinishedDownload += OnFinishedDownload;
+
+            return videoService.DownloadAsync(applicationContext.VideoUrl, FileName, selectedVideoFormat.FormatCode, selectedAudioFormat.FormatCode);
         }
     }
 }

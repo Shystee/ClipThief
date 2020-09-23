@@ -1,13 +1,20 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-using ClipThief.Ui.Command;
+using ClipThief.Ui.Contexts;
 using ClipThief.Ui.Core;
 using ClipThief.Ui.Extensions;
 using ClipThief.Ui.Factories;
 using ClipThief.Ui.Services;
+
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 
 namespace ClipThief.Ui.ViewModels
 {
@@ -19,36 +26,35 @@ namespace ClipThief.Ui.ViewModels
     {
         private readonly IApplicationService applicationService;
 
+        private readonly ApplicationContext applicationContext;
+
         private readonly IFormatSelectionViewModelFactory factory;
 
         private readonly IVideoDownloadService videoDownloadService;
 
-        private string videoUrl;
-
-        public DownloadViewModel(IFormatSelectionViewModelFactory factory, IVideoDownloadService videoDownloadService, IApplicationService applicationService)
+        public DownloadViewModel(ApplicationContext applicationContext, IFormatSelectionViewModelFactory factory, IVideoDownloadService videoDownloadService, IApplicationService applicationService)
         {
+            this.applicationContext = applicationContext;
             this.factory = factory;
             this.videoDownloadService = videoDownloadService;
             this.applicationService = applicationService;
 
-            SelectFormatCommand = ReactiveCommand<Unit>.Create().DisposeWith(this);
+            VideoUrl = applicationContext.ToReactivePropertyAsSynchronized(x => x.VideoUrl);
+
+            SelectFormatCommand = new AsyncReactiveCommand().DisposeWith(this);
             SelectFormatCommand.Subscribe(x => OpenVideoFormatSelectionAsync()).DisposeWith(this);
         }
 
         // todo: add validation
-        public ReactiveCommand<Unit> SelectFormatCommand { get; }
+        public AsyncReactiveCommand SelectFormatCommand { get; }
 
-        public string VideoUrl
-        {
-            get => videoUrl;
-            set => SetPropertyAndNotify(ref videoUrl, value);
-        }
+        public ReactiveProperty<string> VideoUrl { get; }
 
         private async Task OpenVideoFormatSelectionAsync()
         {
-            var videoFormats = await videoDownloadService.GetVideoQualitiesAsync(VideoUrl).ConfigureAwait(false);
-            var audioFormats = await videoDownloadService.GetAudioQualitiesAsync(VideoUrl).ConfigureAwait(false);
-            applicationService.Post(factory.Create(VideoUrl, videoFormats, audioFormats));
+            var videoFormats = await videoDownloadService.GetVideoQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
+            var audioFormats = await videoDownloadService.GetAudioQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
+            applicationService.Post(factory.Create(applicationContext.VideoUrl, videoFormats, audioFormats));
         }
     }
 }

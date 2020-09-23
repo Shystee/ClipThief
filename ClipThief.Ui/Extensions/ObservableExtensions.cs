@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-
-using ClipThief.Ui.Command;
 using ClipThief.Ui.Services;
+using Reactive.Bindings;
 
 namespace ClipThief.Ui.Extensions
 {
@@ -28,7 +27,7 @@ namespace ClipThief.Ui.Extensions
 
         public static ReactiveCommand<object> ToCommand(this IObservable<bool> canExecute)
         {
-            return ReactiveCommand.Create(canExecute);
+            return new ReactiveCommand(canExecute);
         }
     }
 }

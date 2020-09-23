@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 
+using ClipThief.Ui.Contexts;
 using ClipThief.Ui.Extensions;
 using ClipThief.Ui.Factories;
 using ClipThief.Ui.Services;
@@ -69,6 +70,7 @@ namespace ClipThief.Ui
             services.AddSingleton<IApplicationService, ApplicationService>();
             services.AddSingleton<IFormatSelectionViewModelFactory, FormatSelectionViewModelFactory>();
             services.AddSingleton<IVideoDownloadService, YoutubeDownloadService>();
+            services.AddSingleton<ApplicationContext>();
             services.AddTransient<IDownloadViewModel, DownloadViewModel>();
             services.AddTransient<IVideoFormatSelectionViewModel, VideoFormatSelectionViewModel>();
         }
