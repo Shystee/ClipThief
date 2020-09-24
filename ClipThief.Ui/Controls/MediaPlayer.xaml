@@ -14,9 +14,8 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <MediaElement Grid.Row="0" Grid.RowSpan="2" x:Name="Player"
-                      Source="{Binding ElementName=Root, Path=Source, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                      LoadedBehavior="Manual" />
+        <controls:VlcPlayer Grid.Row="0" Grid.RowSpan="2" x:Name="Player"
+                      Source="{Binding ElementName=Root, Path=Source}"/>
         <Border x:Name="MediaControl" Grid.Row="1" Margin="5" Visibility="Hidden" CornerRadius="10"
                 Background="WhiteSmoke" Padding="5">
             <Grid>

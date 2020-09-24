@@ -52,9 +52,9 @@ namespace ClipThief.Ui.ViewModels
 
         private async Task OpenVideoFormatSelectionAsync()
         {
-            var videoFormats = await videoDownloadService.GetVideoQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
-            var audioFormats = await videoDownloadService.GetAudioQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
-            applicationService.Post(factory.Create(applicationContext.VideoUrl, videoFormats, audioFormats));
+            var videoFormats = videoDownloadService.GetVideoQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
+            var audioFormats = videoDownloadService.GetAudioQualitiesAsync(applicationContext.VideoUrl).ConfigureAwait(false);
+            applicationService.Post(factory.Create(applicationContext.VideoUrl, await videoFormats, await audioFormats));
         }
     }
 }

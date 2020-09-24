@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
 using ClipThief.Ui.Events;
 using ClipThief.Ui.Exceptions;
 using ClipThief.Ui.Models;
@@ -53,14 +53,17 @@ namespace ClipThief.Ui.Services
 
         public event StartedDownloadEventHandler StartedDownload;
 
-        public bool Finished { get; private set; }
+        public List<DownloadProgress> Progresses { get; private set; }
 
-        public decimal Percentage { get; private set; }
+        //public bool Finished { get; private set; }
+
+        //public decimal Percentage { get; private set; }
 
         public Task DownloadAsync(string url, string fileName, int videoFormat, int audioFormat)
         {
-            Finished = false;
-            Percentage = 0;
+            //Finished = false;
+            //Percentage = 0;
+            Progresses = new List<DownloadProgress>();
 
             var arguments =
                 $"--continue  --no-overwrites --restrict-filenames -o \"{fileName}.%(ext)s\" --format {videoFormat}+{audioFormat} --merge-output-format mp4 {url}";
@@ -82,7 +85,8 @@ namespace ClipThief.Ui.Services
 
             process.OutputDataReceived += DownloadOutputHandler;
             process.ErrorDataReceived += DownloadErrorDataReceived;
-            process.Exited += ProcessExited;
+
+            //process.Exited += ProcessExited;
             process.Start();
             process.BeginOutputReadLine();
             OnDownloadStarted(new DownloadEventArgs { ProcessObject = process });
@@ -195,10 +199,8 @@ namespace ClipThief.Ui.Services
 
         protected virtual void OnDownloadFinished(DownloadEventArgs e)
         {
-            Finished = true;
             process.OutputDataReceived -= DownloadOutputHandler;
             process.ErrorDataReceived -= DownloadErrorDataReceived;
-            process.Exited -= ProcessExited;
             FinishedDownload?.Invoke(this, e);
         }
 
@@ -246,44 +248,59 @@ namespace ClipThief.Ui.Services
                 return;
             }
 
+            const string FileDeletionPattern = @"\bfile\s([\w.]+)?";
+            var fileDeletionMatches = new Regex(FileDeletionPattern, RegexOptions.None);
+
+            if (fileDeletionMatches.IsMatch(e.Data))
+            {
+                OnFileDeletion(e.Data, FileDeletionPattern);
+
+                return;
+            }
+
             if (!e.Data.Contains("[download]"))
             {
                 return;
             }
 
-            var pattern = new Regex(@"\b\d+([\.,]\d+)?", RegexOptions.None);
+            const string FilePattern = @"\b:\s+([\w.]+)?";
+            var fileMatches = new Regex(FilePattern, RegexOptions.None);
 
-            if (!pattern.IsMatch(e.Data))
+            if (fileMatches.IsMatch(e.Data))
+            {
+                Progresses.Add(new DownloadProgress(Regex.Match(e.Data, FilePattern).Groups[1].Value));
+
+                return;
+            }
+
+            OnPercentageChange(e.Data);
+        }
+
+        private void OnPercentageChange(string dataLine)
+        {
+            const string DownloadPattern = @"\b\d+([\.,]\d+)?";
+            var downloadMatches = new Regex(DownloadPattern, RegexOptions.None);
+
+            if (!downloadMatches.IsMatch(dataLine))
             {
                 return;
             }
 
             // fire the process event
-            var percentage = Convert.ToDecimal(Regex.Match(e.Data, @"\b\d+([\.,]\d+)?").Value);
+            var percentage = Convert.ToDecimal(Regex.Match(dataLine, DownloadPattern).Value);
 
             if (percentage > 100 || percentage < 0)
             {
                 throw new WrongPercentageDecimalException("Weird percentage parsed.");
             }
 
-            Percentage = percentage;
+            Progresses.Last().Percentage = percentage;
             OnProgress(
                        new ProgressEventArgs
                            {
                                ProcessObject = process,
                                Percentage = percentage
                            });
-
-            // is it finished?
-            if (percentage < 100)
-            {
-                return;
-            }
-
-            if (percentage == 100)
-            {
-                OnDownloadFinished(new DownloadEventArgs { ProcessObject = process });
-            }
         }
 
         private AudioFormat GetAudioFormat(string dataLine)
@@ -327,9 +344,7 @@ namespace ClipThief.Ui.Services
                            FormatCode = Convert.ToInt32(matches[1].Value),
                            Format = matches[2].Value,
                            Resolution =
-                               new Resolution(
-                                              Convert.ToInt32(matches[3].Value),
-                                              Convert.ToInt32(matches[4].Value)),
+                               new Resolution(Convert.ToInt32(matches[3].Value), Convert.ToInt32(matches[4].Value)),
                            Quality = matches[5].Value,
                            BitRate = Convert.ToInt32(matches[6].Value),
                            Encoder = matches[7].Value,
@@ -339,9 +354,23 @@ namespace ClipThief.Ui.Services
                        };
         }
 
-        private void ProcessExited(object sender, EventArgs e)
+        private void OnFileDeletion(string dataLine, string pattern)
         {
-            OnDownloadFinished(new DownloadEventArgs { ProcessObject = process });
+            var file = Progresses.FirstOrDefault(x => x.FileName.Equals(Regex.Match(dataLine, pattern).Groups[1].Value));
+
+            if (file == null) return;
+
+            file.Finished = true;
+
+            if (Progresses.All(x => x.Finished))
+            {
+                OnDownloadFinished(new DownloadEventArgs { ProcessObject = process });
+            }
         }
+
+        //private void ProcessExited(object sender, EventArgs e)
+        //{
+        //    OnDownloadFinished(new DownloadEventArgs { ProcessObject = process });
+        //}
     }
 }

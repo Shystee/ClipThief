@@ -17,7 +17,8 @@ namespace ClipThief.Ui.ViewModels
 
         public ApplicationViewModel(IDownloadViewModel main, IApplicationService applicationService)
         {
-            Main = main;
+            // Main = main;
+            Main = new VideoCuttingViewModel("TESTING21");
 
             applicationService.Show.Subscribe(x => Main = x).DisposeWith(this);
         }
