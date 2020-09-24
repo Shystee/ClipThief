@@ -11,17 +11,29 @@ namespace ClipThief.Ui.Controls
     /// </summary>
     public partial class MediaPlayer : UserControl
     {
+        public static readonly DependencyProperty EndTimeProperty =
+            DependencyProperty.Register("EndTime", typeof(double), typeof(MediaPlayer), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(string), typeof(MediaPlayer), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty StartTimeProperty =
+            DependencyProperty.Register("StartTime", typeof(double), typeof(MediaPlayer), new PropertyMetadata(null));
 
         public MediaPlayer()
         {
             InitializeComponent();
             Unloaded += UnloadedHandler;
             PlayButton.Click += PauseButtonOnClick;
-            Player.SourceProvider.MediaPlayer.PositionChanged += MediaPlayerOnPositionChanged;
+            Player.SourceProvider.MediaPlayer.PositionChanged += PlayerOnPositionChanged;
             Player.VideoLoaded += PlayerVideoLoaded;
-            Player.SourceProvider.MediaPlayer.EndReached += MediaPlayer_OnEndReached;
+            Player.SourceProvider.MediaPlayer.EndReached += PlayerOnEndReached;
+        }
+
+        public double EndTime
+        {
+            get => (double)GetValue(EndTimeProperty);
+            set => SetValue(EndTimeProperty, value);
         }
 
         public string Source
@@ -29,6 +41,14 @@ namespace ClipThief.Ui.Controls
             get => (string)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
         }
+
+        public double StartTime
+        {
+            get => (double)GetValue(StartTimeProperty);
+            set => SetValue(StartTimeProperty, value);
+        }
+
+        public long VideoLength { get; private set; }
 
         private void CurrentTimeDragEnded(object sender, DragCompletedEventArgs e)
         {
@@ -56,14 +76,9 @@ namespace ClipThief.Ui.Controls
         {
             if (!Player.SourceProvider.MediaPlayer.IsPlaying())
             {
-                Player.SourceProvider.MediaPlayer.Position = (float)Timeline.CurrentValue;
+                Player.SourceProvider.MediaPlayer.Position = (float)Timeline.CurrentValue / VideoLength;
                 Player.SourceProvider.MediaPlayer.Play();
             }
-        }
-
-        private void MediaPlayer_OnEndReached(object? sender, VlcMediaPlayerEndReachedEventArgs e)
-        {
-            Dispatcher.Invoke(() => Player.RepeatVideoFrom((float)Timeline.LowerValue));
         }
 
         private void MediaPlayerOnMouseEnter(object sender, MouseEventArgs e)
@@ -76,14 +91,9 @@ namespace ClipThief.Ui.Controls
             MediaControl.Visibility = Visibility.Hidden;
         }
 
-        private void MediaPlayerOnPositionChanged(object? sender, VlcMediaPlayerPositionChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() => { Timeline.CurrentValue = e.NewPosition; });
-        }
-
         private void OnCurrentTimeChange(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Player.SourceProvider.MediaPlayer.Position = (float)e.NewValue;
+            Player.SourceProvider.MediaPlayer.Position = (float)e.NewValue / VideoLength;
         }
 
         private void PauseButtonOnClick(object sender, RoutedEventArgs e)
@@ -100,15 +110,26 @@ namespace ClipThief.Ui.Controls
             PlayButton.Click += PauseButtonOnClick;
         }
 
+        private void PlayerOnEndReached(object? sender, VlcMediaPlayerEndReachedEventArgs e)
+        {
+            Dispatcher.Invoke(() => Player.RepeatVideoFrom((float)Timeline.LowerValue / VideoLength));
+        }
+
+        private void PlayerOnPositionChanged(object? sender, VlcMediaPlayerPositionChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() => { Timeline.CurrentValue = e.NewPosition * VideoLength; });
+        }
+
         private void PlayerVideoLoaded(object sender, OnVideoLoadedEventArgs e)
         {
+            VideoLength = Player.SourceProvider.MediaPlayer.Length;
             Dispatcher.Invoke(() =>
                               {
                                   Timeline.LowerValue = 0;
                                   Timeline.Minimum = 0;
                                   Timeline.CurrentValue = 0;
-                                  Timeline.Maximum = 1;
-                                  Timeline.UpperValue = 1;
+                                  Timeline.Maximum = VideoLength;
+                                  Timeline.UpperValue = VideoLength;
                               });
 
             // setup lower timeline events
@@ -125,7 +146,7 @@ namespace ClipThief.Ui.Controls
 
         private void TimelineOnOnUpperValueReached(object sender)
         {
-            Player.SourceProvider.MediaPlayer.Position = (float)Timeline.LowerValue;
+            Player.SourceProvider.MediaPlayer.Position = (float)Timeline.LowerValue / VideoLength;
 
             if (Player.SourceProvider.MediaPlayer.IsPlaying()) return;
 
@@ -135,9 +156,9 @@ namespace ClipThief.Ui.Controls
         private void UnloadedHandler(object sender, RoutedEventArgs e)
         {
             // unhook player events
-            Player.SourceProvider.MediaPlayer.PositionChanged -= MediaPlayerOnPositionChanged;
+            Player.SourceProvider.MediaPlayer.PositionChanged -= PlayerOnPositionChanged;
             Player.VideoLoaded -= PlayerVideoLoaded;
-            Player.SourceProvider.MediaPlayer.EndReached -= MediaPlayer_OnEndReached;
+            Player.SourceProvider.MediaPlayer.EndReached -= PlayerOnEndReached;
 
             // unhook current value events
             Timeline.CurrentSlider.OnDragStarted -= CurrentTimeDragStarted;

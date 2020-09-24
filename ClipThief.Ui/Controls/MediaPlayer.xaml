@@ -4,10 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:ClipThief.Ui.Controls"
+             xmlns:converters="clr-namespace:ClipThief.Ui.Converters"
              mc:Ignorable="d"
              x:Name="Root"
              d:DesignHeight="450" d:DesignWidth="800" MouseEnter="MediaPlayerOnMouseEnter"
              MouseLeave="MediaPlayerOnMouseLeave">
+    <UserControl.Resources>
+        <converters:TimelineConverter x:Key="TimelineConverter" />
+    </UserControl.Resources>
     <Grid Background="Black">
         <Grid.RowDefinitions>
             <RowDefinition Height="9*" />
@@ -15,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <controls:VlcPlayer Grid.Row="0" Grid.RowSpan="2" x:Name="Player"
-                      Source="{Binding ElementName=Root, Path=Source}"/>
+                            Source="{Binding ElementName=Root, Path=Source}" />
         <Border x:Name="MediaControl" Grid.Row="1" Margin="5" Visibility="Hidden" CornerRadius="10"
                 Background="WhiteSmoke" Padding="5">
             <Grid>
@@ -25,7 +29,9 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Content="Play" x:Name="PlayButton" Padding="2" />
-                <controls:RangeSlider x:Name="Timeline" Grid.Column="1" Padding="2" />
+                <controls:RangeSlider x:Name="Timeline" Grid.Column="1" Padding="2"
+                                      LowerValue="{Binding ElementName=Root, Path=StartTime, Mode=TwoWay}"
+                                      UpperValue="{Binding ElementName=Root, Path=EndTime, Mode=TwoWay}" />
             </Grid>
         </Border>
     </Grid>
